@@ -1,11 +1,11 @@
 # Electric RC Motor Dynamometer
 By Josh Wall
 
-*README v0.0.1*
+*README v0.1.0*
 
-## CURRENT STATUS 09-04-2026
-Debugging GPIO problems and getting multiple INA228 and DS18B20 sensors online.
-
+## CURRENT STATUS 09-10-2026
+All sensors are online and working as intended. 
+Currently configuring RC motor to receive signals from ESP32.
 
 ## Overview
 This is my second portfolio project, following my high voltage fly swatter.
@@ -34,8 +34,8 @@ With hall effect sensor on 775 motor side of the transmission.
 - [x] Hall-effect sensor detection
 - [x] INA228 voltage/current measurement
 - [x] INA228 measurements verified against Ohm's law
-- [ ] Dual INA228 integration
-- [ ] Hall-effect RPM measurement using interrupts
+- [x] Dual INA228 integration
+- [x] Hall-effect RPM measurement using interrupts
 - [ ] Three-sensor OneWire temperature bus
 - [ ] OLED interface
 - [ ] Data logging
