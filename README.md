@@ -1,7 +1,7 @@
 # Electric RC Motor Dynamometer
 By Josh Wall
 
-*README v0.1.0*
+**Project Version:** `v0.1.0`
 
 ## CURRENT STATUS 09-10-2026
 All sensors are online and working as intended. 
@@ -36,7 +36,8 @@ With hall effect sensor on 775 motor side of the transmission.
 - [x] INA228 measurements verified against Ohm's law
 - [x] Dual INA228 integration
 - [x] Hall-effect RPM measurement using interrupts
-- [ ] Three-sensor OneWire temperature bus
+- [X] Three-sensor OneWire temperature bus
+- [ ] RC motor control functions programmed
 - [ ] OLED interface
 - [ ] Data logging
 - [ ] Mechanical assembly
