@@ -1,11 +1,10 @@
 # Electric RC Motor Dynamometer
 By Josh Wall
 
-**Project Version:** `v0.1.0`
+**Project Version:** `v0.2.0`
 
-## CURRENT STATUS 09-10-2026
-All sensors are online and working as intended. 
-Currently configuring RC motor to receive signals from ESP32.
+## CURRENT STATUS 09-12-2026
+Motor successfully receiving PWM signals and spinning. Adding joystick functionality.
 
 ## Overview
 This is my second portfolio project, following my high voltage fly swatter.
