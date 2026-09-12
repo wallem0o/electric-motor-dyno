@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <cmath>
 #include <Adafruit_NeoPixel.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -11,6 +12,7 @@ const int ONE_WIRE_BUS = 9;
 const int SDA_PIN = 3;
 const int SCL_PIN = 46;
 const int PWM_PIN = 15;
+const int VRY_PIN = 1;
 
 const int PWM_FREQ = 50;
 const int LEDC_CHANNEL = 0;
@@ -41,6 +43,8 @@ void setup()
 
   Serial.println();
   Serial.println("Program initialized...");
+
+  analogSetAttenuation(ADC_11db);
 
   tempSensors.begin();
   Serial.print("Locating devices...");
@@ -112,8 +116,9 @@ void setup()
   }
 
   ledcSetup(LEDC_CHANNEL, PWM_FREQ, RESOLUTION);
+  Serial.println("LEDC initializing...");
   ledcAttachPin(PWM_PIN, LEDC_CHANNEL);
-  Serial.println("LEDC initialized.");
+  Serial.println("Arming motor...");
   ledcWrite(LEDC_CHANNEL, NEUTRAL_DUTY_CYCLE);
   delay(5000);
 
@@ -124,9 +129,17 @@ void setup()
 
 void loop()
 {
-  int hallState = digitalRead(12);
 
-  tempSensors.requestTemperatures();
+  int joystickDuty(int raw);
+
+  int hallState = digitalRead(12);
+  int yRaw = analogRead(VRY_PIN);
+  int throttleDuty = joystickDuty(yRaw);
+  ledcWrite(LEDC_CHANNEL, throttleDuty);
+
+  Serial.println(throttleDuty);
+
+ // tempSensors.requestTemperatures();
 
   float tempC_1 = tempSensors.getTempCByIndex(0);
   float tempC_2 = tempSensors.getTempCByIndex(1);
@@ -138,13 +151,6 @@ void loop()
   float busVoltage2 = ina228_2.getBusVoltage();
   float current2 = ina228_2.getCurrent();
   float inaTempC2 = ina228_2.getTemperature();
-
-  ledcWrite(LEDC_CHANNEL, testDutyCycle);
-  delay(2000);
-  ledcWrite(LEDC_CHANNEL, MAX_DUTY_CYCLE);
-  delay(2000);
-  ledcWrite(LEDC_CHANNEL, testDutyCycle);
-  delay(1000);
 }
 
 void printAddress(DeviceAddress deviceAddress)
@@ -156,4 +162,25 @@ void printAddress(DeviceAddress deviceAddress)
       Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
+}
+
+int joystickDuty(int raw)
+{
+  int clampPW(int value);
+  float yFactor = (raw - 2048) / 2048.0;
+
+  if (abs(yFactor) < 0.08) {
+    return NEUTRAL_DUTY_CYCLE;
+  }
+
+  else {
+    int pw = clampPW(1500 + round(yFactor * 500));
+    int duty = (pw * 16384) / 20000;
+    return duty;
+  }
+}
+
+int clampPW(int value)
+{
+  return max(MIN_PW, min(MAX_PW, value));
 }
