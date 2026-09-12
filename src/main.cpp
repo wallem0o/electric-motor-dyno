@@ -10,6 +10,18 @@ const int HALL_PIN = 12;
 const int ONE_WIRE_BUS = 9;
 const int SDA_PIN = 3;
 const int SCL_PIN = 46;
+const int PWM_PIN = 15;
+
+const int PWM_FREQ = 50;
+const int LEDC_CHANNEL = 0;
+const int RESOLUTION = 14;
+const int MIN_PW = 1000;
+const int MAX_PW = 2000;
+const int MIN_DUTY_CYCLE = (1000 * 16384) / 20000;
+const int NEUTRAL_DUTY_CYCLE = (1500 * 16384) / 20000;
+const int MAX_DUTY_CYCLE = (MAX_PW * 16384) / 20000; // When fully set up, test for true max with rpm graph.
+
+const int testDutyCycle = (1200 * 16384) / 20000;
 
 Adafruit_NeoPixel boardLed(1, LED_PIN, NEO_GRB + NEO_KHZ800);
 OneWire onewire(ONE_WIRE_BUS);
@@ -58,9 +70,11 @@ void setup()
   Wire.setPins(SDA_PIN, SCL_PIN);
   bool success = Wire.begin();
 
-  for (int i = 0; i < 127; i++) {
+  for (int i = 0; i < 127; i++)
+  {
     Wire.beginTransmission(i);
-    if (Wire.endTransmission() == 0) {
+    if (Wire.endTransmission() == 0)
+    {
       Serial.println(i, HEX);
     }
   }
@@ -87,7 +101,8 @@ void setup()
     else
     {
       Serial.println("Failed to connect to INA228_2 sensor.");
-      while (1);
+      while (1)
+        ;
     }
   }
 
@@ -95,6 +110,12 @@ void setup()
   {
     Serial.println("I2C Connection Failed.");
   }
+
+  ledcSetup(LEDC_CHANNEL, PWM_FREQ, RESOLUTION);
+  ledcAttachPin(PWM_PIN, LEDC_CHANNEL);
+  Serial.println("LEDC initialized.");
+  ledcWrite(LEDC_CHANNEL, NEUTRAL_DUTY_CYCLE);
+  delay(5000);
 
   boardLed.setPixelColor(0, 125, 0, 255);
   boardLed.show();
@@ -108,21 +129,8 @@ void loop()
   tempSensors.requestTemperatures();
 
   float tempC_1 = tempSensors.getTempCByIndex(0);
-  Serial.print("DS18B20_1 Temperature: ");
-  Serial.print(tempC_1);
-  Serial.println("°C");
-
   float tempC_2 = tempSensors.getTempCByIndex(1);
-  Serial.print("DS18B20_2 Temperature: ");
-  Serial.print(tempC_2);
-  Serial.println("°C");
-
   float tempC_3 = tempSensors.getTempCByIndex(2);
-  Serial.print("DS18B20_3 Temperature: ");
-  Serial.print(tempC_3);
-  Serial.println("°C");
-
-  Serial.println();
 
   float busVoltage1 = ina228_1.getBusVoltage();
   float current1 = ina228_1.getCurrent();
@@ -131,34 +139,11 @@ void loop()
   float current2 = ina228_2.getCurrent();
   float inaTempC2 = ina228_2.getTemperature();
 
-  Serial.println("INA 1:");
-  Serial.println("\nBUS\tSHUNT\tCURRENT\tPOWER\tTEMP");
-  Serial.print(ina228_1.getBusVoltage());
-  Serial.print("\t");
-  Serial.print(ina228_1.getShuntMilliVolt());
-  Serial.print("\t");
-  Serial.print(ina228_1.getMilliAmpere());
-  Serial.print("\t");
-  Serial.print(ina228_1.getMilliWatt());
-  Serial.print("\t");
-  Serial.print(ina228_1.getTemperature());
-  Serial.println();
-  Serial.println();
-
-  Serial.println("INA 2:");
-  Serial.println("\nBUS\tSHUNT\tCURRENT\tPOWER\tTEMP");
-  Serial.print(ina228_2.getBusVoltage());
-  Serial.print("\t");
-  Serial.print(ina228_2.getShuntMilliVolt());
-  Serial.print("\t");
-  Serial.print(ina228_2.getMilliAmpere());
-  Serial.print("\t");
-  Serial.print(ina228_2.getMilliWatt());
-  Serial.print("\t");
-  Serial.print(ina228_2.getTemperature());
-  Serial.println();
-  Serial.println();
-
+  ledcWrite(LEDC_CHANNEL, testDutyCycle);
+  delay(2000);
+  ledcWrite(LEDC_CHANNEL, MAX_DUTY_CYCLE);
+  delay(2000);
+  ledcWrite(LEDC_CHANNEL, testDutyCycle);
   delay(1000);
 }
 
@@ -167,7 +152,8 @@ void printAddress(DeviceAddress deviceAddress)
   for (uint8_t i = 0; i < 8; i++)
   {
     // zero pad the address if necessary
-    if (deviceAddress[i] < 16) Serial.print("0");
+    if (deviceAddress[i] < 16)
+      Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
 }
