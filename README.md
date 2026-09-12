@@ -1,10 +1,10 @@
 # Electric RC Motor Dynamometer
 By Josh Wall
 
-**Project Version:** `v0.2.0`
+**Project Version:** `v0.3.0`
 
 ## CURRENT STATUS 09-12-2026
-Motor successfully receiving PWM signals and spinning. Adding joystick functionality.
+Joystick now can control forward and reverse on the motor. 
 
 ## Overview
 This is my second portfolio project, following my high voltage fly swatter.
@@ -36,7 +36,7 @@ With hall effect sensor on 775 motor side of the transmission.
 - [x] Dual INA228 integration
 - [x] Hall-effect RPM measurement using interrupts
 - [X] Three-sensor OneWire temperature bus
-- [ ] RC motor control functions programmed
+- [X] RC motor control functions programmed
 - [ ] OLED interface
 - [ ] Data logging
 - [ ] Mechanical assembly
